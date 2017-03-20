@@ -528,16 +528,11 @@ public class SearchScrollIT extends ESIntegTestCase {
     
     public void testTimeoutLimitOnScroll() throws Exception {
         
-        try {
-          SearchResponse searchResponse = client().prepareSearch()
-                  .setQuery(matchAllQuery())
-                  .setSize(35)
-                  .setScroll(TimeValue.timeValueMinutes(6))
-                  .addSort("field", SortOrder.ASC)
-                  .execute().actionGet();
-        } catch (IllegalArgumentException e){
-            boolean checkExceptionMessage = e.getMessage().equals("Keep Alive values are restricted to 5 minutes or less.");
-            assertTrue(checkExceptionMessage);
-        }
-    }
+         expectThrows(IllegalArgumentException.class, () -> client().prepareSearch()
+                 .setQuery(matchAllQuery())
+                 .setSize(35)
+                 .setScroll(TimeValue.timeValueMinutes(6))
+                 .addSort("field", SortOrder.ASC)
+                 .execute().actionGet(););
+          }
 }
